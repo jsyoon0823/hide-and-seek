@@ -33,10 +33,11 @@ import argparse
 import pickle
 import numpy as np
 import shutil
+
 from hider.timegan import timegan
 from hider.add_noise import add_noise
 from seeker.knn.knn_seeker import knn_seeker
-
+from seeker.binary_predictor.binary_predictor import binary_predictor
 from data.data_utils import data_division
 from metrics.metric_utils import feature_prediction, one_step_ahead_prediction, reidentify_score
 
@@ -76,7 +77,8 @@ def main(args):
     generated_data = timegan.timegan(train_data)
   elif args.hider_model == 'add_noise':
     generated_data = add_noise.add_noise(train_data, args.noise_size)  
-  print('Finish hider algorithm training')  
+    
+  print('Finish hider algorithm (' + args.hider_model  + ') training')  
   
   ## Define enlarge data and its labels
   enlarge_data = np.concatenate((train_data, test_data), axis = 0)
@@ -88,9 +90,12 @@ def main(args):
   enlarge_data_label = enlarge_data_label[idx]
   
   ## Run seeker algorithm
-  reidentified_data = knn_seeker(generated_data, enlarge_data)
+  if args.seeker_model == 'binary_predictor':
+    reidentified_data = binary_predictor(generated_data, enlarge_data)  
+  elif args.seeker_model == 'knn':
+    reidentified_data = knn_seeker(generated_data, enlarge_data)
   
-  print('Finish seeker algorithm training')  
+  print('Finish seeker algorithm (' + args.seeker_model  + ') training')  
   
   ## Evaluate the performance
   # 1. Feature prediction
@@ -155,6 +160,11 @@ if __name__ == '__main__':
       '--noise_size',
       default=0.1,
       type=float)
+  parser.add_argument(
+      '--seeker_model',
+      choices=['binary_predictor','knn'],
+      default='binary_predictor',
+      type=str)
   
   args = parser.parse_args()
 

@@ -18,7 +18,6 @@ and reidentifying the original data (seeker) using a real-world dataset.
 To run the pipeline for training and evaluation on NeurIPS Hide-and-Seek competition framwork, simply run 
 python3 -m main_hide-and-seek.py.
 
-
 ### Code explanation
 
 (1) data
@@ -41,6 +40,9 @@ python3 -m main_hide-and-seek.py.
 
 (5) seeker
 - knn: use the distance between original and synthetic data for reidentifying the real data
+- binary_predictor: use the binary predictor (to classify the genereated data and real data) 
+                    to define the distance between original and synthetic data.
+                    Then, use that distance for reidentifying the real data
 
 (6) main_hide-and-seek.py
 - main file that competition participants (both hider and seeker) can use.
@@ -53,12 +55,14 @@ python3 -m main_hide-and-seek.py.
 -   seed: random seed for train / test data division
 -   hider_model: timegan or add_noise
 -   noise_size: size of the noise for add_noise hider
+-   seeker_model: binary_predictor or knn
 
 ### Example command
 
 ```shell
 $ python3 main_hide-and-seek.py --data_name stock --train_rate 0.8 
 --feature_prediction_no 2 --seed 0 --hider_model timegan --noise_size 0.1 
+--seeker_model binary_predictor
 ```
 
 ### Outputs
