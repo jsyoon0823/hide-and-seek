@@ -4,10 +4,11 @@ Reference: James Jordon, Daniel Jarrett, Jinsung Yoon, Ari Ercole, Cheng Zhang, 
 "Hide-and-Seek Privacy Challenge: Synthetic Data Generation vs. Patient Re-identification with Clinical Time-series Data," 
 Neural Information Processing Systems (NeurIPS) Competition, 2020.
 
-Paper link: 
+Link: https://www.vanderschaar-lab.com/announcing-the-neurips-2020-hide-and-seek-privacy-challenge/
 
-Last updated Date: April 28th 2020
-Code author: Jinsung Yoon (jsyoon0823@gmail.com)
+Last updated Date: June 21th 2020
+Code author: Jinsung Yoon
+Contact: jsyoon0823@gmail.com
 
 -----------------------------
 
@@ -30,15 +31,18 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-import pickle
 import numpy as np
 import shutil
+import pickle
+import warnings
+warnings.filterwarnings("ignore")
 
 from hider.timegan import timegan
 from hider.add_noise import add_noise
 from seeker.knn.knn_seeker import knn_seeker
 from seeker.binary_predictor.binary_predictor import binary_predictor
 from data.data_utils import data_division
+from data.data_preprocess import data_preprocess
 from metrics.metric_utils import feature_prediction, one_step_ahead_prediction, reidentify_score
 
 
@@ -46,7 +50,8 @@ def main(args):
   """Hide-and-Seek Privacy Challenge main function.
   
   Args:
-    - data_name: stock
+    - data_name: amsterdam or stock
+    - max_seq_len: maximum sequence length
     - train_rate: ratio of training data
     - feature_prediction_no: the number of features to be predicted for evaluation
     - seed: random seed for train / test data division
@@ -59,10 +64,14 @@ def main(args):
     - reidentification_score: reidentification score between hider and seeker
   """
   
-  ## Load data
-  with open('data/public_data/public_' + args.data_name + '_data.txt', 'rb') as fp:
-    ori_data = pickle.load(fp)
-    ori_data = np.asarray(ori_data)
+  ## Load & preprocess data
+  if args.data_name == 'amsterdam':   
+    file_name = 'data/amsterdam/train_longitudinal_data.csv'
+    ori_data = data_preprocess(file_name, args.max_seq_len)
+  elif args.data_name == 'stock':
+    with open('data/public_data/public_' + args.data_name + '_data.txt', 'rb') as fp:
+      ori_data = pickle.load(fp)
+      ori_data = np.asarray(ori_data)
     
   # Divide the data into training and testing
   divided_data, _ = data_division(ori_data, seed = args.seed, divide_rates = [args.train_rate, 1-args.train_rate])
@@ -136,9 +145,13 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--data_name',
-      choices=['stock'],
-      default='stock',
+      choices=['amsterdam','stock'],
+      default='amsterdam',
       type=str)
+  parser.add_argument(
+      '--max_seq_len',
+      default=100,
+      type=int)
   parser.add_argument(
       '--train_rate',
       default=0.8,

@@ -1,18 +1,19 @@
 # Codebase for NeurIPS "Hide-and-Seek Privacy Challenge" Competition 
 
-Authors: James Jordon,Jinsung Yoon,  Mihaela van der Schaar
-
 Reference: James Jordon, Daniel Jarrett, Jinsung Yoon, Ari Ercole, Cheng Zhang, Danielle Belgrave, Mihaela van der Schaar, 
 "Hide-and-Seek Privacy Challenge: Synthetic Data Generation vs. Patient Re-identification with Clinical Time-series Data," 
 Neural Information Processing Systems (NeurIPS) Competition, 2020.
 
-Paper 
+Link: https://www.vanderschaar-lab.com/announcing-the-neurips-2020-hide-and-seek-privacy-challenge/
 
+Last updated Date: June 21th 2020
+Code author: Jinsung Yoon
 Contact: jsyoon0823@gmail.com
 
 This directory contains implementations of NeurIPS Hide-and-Seek competition framework for generating private synthetic data (hider)
-and reidentifying the original data (seeker) using a real-world dataset.
+and reidentifying the original data (seeker) using real-world datasets.
 
+-   Amsterdam data: https://amsterdammedicaldatascience.nl/ (private data that needs approval through the website)
 -   Stock data: https://finance.yahoo.com/quote/GOOG/history?p=GOOG
 
 To run the pipeline for training and evaluation on NeurIPS Hide-and-Seek competition framwork, simply run 
@@ -21,18 +22,18 @@ python3 -m main_hide-and-seek.py.
 ### Code explanation
 
 (1) data
-- public_data directory: public data to be released to the participants
+- public_data directory: public data to be released to the participants (as an example)
+- amsterdam_data directory: amsterdam data should be in this directory named as train_longitudinal_data.csv (main data)
 - data_utils.py: train/test data division 
+- data_preprocess.py: data preprocessing for Amsterdam database
 
 (2) hider
 - add_noise: add Gaussian noise on the original data and use it as the synthetic data
 - timegan: TimeGAN (Yoon et al., NeurIPS 2019) model for generating synthetic time-series data
 
 (3) master (only for the master (competition owner))
-- private_data: private data for evaluating submitted models
-- raw_data: original data (public data U private data)
-- data_release.py: data preprocessing code
 - main_master.py: main file for the evaluation
+- masters need to put test_longitudinal_data.csv in data/amsterdam directory
 
 (4) metrics
 - general_rnn.py: general rnn models for evaluation
@@ -49,7 +50,8 @@ python3 -m main_hide-and-seek.py.
 
 ### Command inputs:
 
--   data_name: stock
+-   data_name: amsterdam or stock
+-   max_seq_len: maximum sequence length
 -   train_rate: ratio of training data
 -   feature_prediction_no: the number of features to be predicted for evaluation
 -   seed: random seed for train / test data division
@@ -60,9 +62,9 @@ python3 -m main_hide-and-seek.py.
 ### Example command
 
 ```shell
-$ python3 main_hide-and-seek.py --data_name stock --train_rate 0.8 
---feature_prediction_no 2 --seed 0 --hider_model timegan --noise_size 0.1 
---seeker_model binary_predictor
+$ python3 main_hide-and-seek.py --data_name amsterdam --max_seq_len 10
+--train_rate 0.8 --feature_prediction_no 2 --seed 0 --hider_model timegan 
+--noise_size 0.1 --seeker_model binary_predictor
 ```
 
 ### Outputs

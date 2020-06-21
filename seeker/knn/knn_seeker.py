@@ -4,10 +4,11 @@ Reference: James Jordon, Daniel Jarrett, Jinsung Yoon, Ari Ercole, Cheng Zhang, 
 "Hide-and-Seek Privacy Challenge: Synthetic Data Generation vs. Patient Re-identification with Clinical Time-series Data," 
 Neural Information Processing Systems (NeurIPS) Competition, 2020.
 
-Paper link: 
+Link: https://www.vanderschaar-lab.com/announcing-the-neurips-2020-hide-and-seek-privacy-challenge/
 
-Last updated Date: April 28th 2020
-Code author: Jinsung Yoon (jsyoon0823@gmail.com)
+Last updated Date: June 21th 2020
+Code author: Jinsung Yoon
+Contact: jsyoon0823@gmail.com
 
 -----------------------------
 
