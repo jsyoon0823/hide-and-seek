@@ -1,0 +1,1 @@
+command: python3 $program/ingestion.py $submission_program $input $output/stats.json

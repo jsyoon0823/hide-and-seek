@@ -1,0 +1,50 @@
+title: "Hide-and-Seek Privacy Challenge"
+description: "Synthetic Data Generation vs. Patient Re-identification with Clinical Time-series Data"
+# image:
+has_registration: true
+force_submission_to_leaderboard: true
+disallow_leaderboard_modifying: true
+enable_detailed_results: false
+end_date: 2020-11-16
+admin_names: tavianator,JamesJ
+
+html:
+    overview: overview.html
+    evaluation: evaluation.html
+    terms: terms_and_conditions.html
+    data: data.html
+
+phases:
+    1:
+        phasenumber: 1
+        color: green
+        label: "Development"
+        description: "Generation- and inference-track submissions."
+        start_date: 2020-06-15
+        execution_time_limit: 0
+        max_submissions: 0
+        max_submissions_per_day: 1
+        is_scoring_only: false
+        ingestion_program: ingestion_program.zip
+        scoring_program: scoring_program.zip
+        input_data: public_data.zip
+        public_data: public_data.zip
+        reference_data: reference_data.zip
+        starting_kit: starting_kit.zip
+
+    2:
+        phasenumber: 2
+        color: purple
+        description: "Final phase."
+        start_date: 2020-10-15
+        execution_time_limit: 0
+        max_submissions: 0
+        max_submissions_per_day: 1
+        is_scoring_only: true
+        ingestion_program: ingestion_program.zip
+        scoring_program: scoring_program.zip
+        input_data: public_data.zip
+        public_data: public_data.zip
+        reference_data: reference_data.zip
+        starting_kit: starting_kit.zip
+

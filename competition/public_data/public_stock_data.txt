@@ -1,0 +1,1 @@
+../../data/public_data/public_stock_data.txt
