@@ -20,7 +20,7 @@ Contact: jsyoon0823@gmail.com
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -46,7 +46,7 @@ def data_preprocess(file_name, max_seq_len):
   median_vals = ori_data.median()
 
   # Preprocessing
-  scaler = MinMaxScaler()
+  scaler = StandardScaler()
   scaler.fit(ori_data)
 
   # Output initialization

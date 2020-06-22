@@ -117,7 +117,7 @@ def timegan (ori_data):
     with tf.variable_scope("recovery", reuse = tf.AUTO_REUSE):       
       r_cell = tf.nn.rnn_cell.MultiRNNCell([rnn_cell(module_name, hidden_dim) for _ in range(num_layers)])
       r_outputs, r_last_states = tf.nn.dynamic_rnn(r_cell, H, dtype=tf.float32, sequence_length = T)
-      X_tilde = tf.contrib.layers.fully_connected(r_outputs, dim, activation_fn=tf.nn.sigmoid) 
+      X_tilde = tf.contrib.layers.fully_connected(r_outputs, dim, activation_fn=None)
     return X_tilde
     
   def generator (Z, T):  
