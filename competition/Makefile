@@ -30,11 +30,36 @@ reference_data.zip: \
     reference_data/metadata
 	zip -j $@ $^
 
+starting_kit/hider_add_noise.zip: \
+    starting_kit/hider_add_noise/metadata \
+    starting_kit/hider_add_noise/add_noise.py
+	zip -j $@ $^
+
+starting_kit/hider_timegan.zip: \
+    starting_kit/hider_timegan/metadata \
+    starting_kit/hider_timegan/timegan.py \
+    starting_kit/hider_timegan/utils.py
+	zip -j $@ $^
+
+starting_kit/seeker_binary_predictor.zip: \
+    starting_kit/seeker_binary_predictor/metadata \
+    starting_kit/seeker_binary_predictor/binary_predictor.py \
+    starting_kit/seeker_binary_predictor/general_rnn.py
+	zip -j $@ $^
+
+starting_kit/seeker_knn.zip: \
+    starting_kit/seeker_knn/metadata \
+    starting_kit/seeker_knn/knn_seeker.py
+	zip -j $@ $^
+
 starting_kit.zip: \
-    starting_kit/metadata
+    starting_kit/hider_add_noise.zip \
+    starting_kit/hider_timegan.zip \
+    starting_kit/seeker_binary_predictor.zip \
+    starting_kit/seeker_knn.zip
 	zip -j $@ $^
 
 clean:
-	$(RM) *.zip
+	$(RM) *.zip starting_kit/*.zip
 
 .PHONY: clean
