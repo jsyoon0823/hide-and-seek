@@ -502,6 +502,8 @@ def run(task_id, task_args):
                     # Set the right volume
                     '-v', '{0}:{0}'.format(run_dir),
                     '-v', '{0}:{0}'.format(shared_dir),
+                    # Allow the nested container to use docker
+                    '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     # Set aside 512m memory for the host
                     '--memory', '{}MB'.format(available_memory_mib - 512),
                     # Don't buffer python output, so we don't lose any
@@ -573,6 +575,11 @@ def run(task_id, task_args):
                     '-v', '{0}:{0}'.format(run_dir),
                     '-v', '{0}:{0}'.format(shared_dir),
                     '-v', '{0}:{0}'.format(hidden_ref_dir),
+                    # Allow the nested container to use docker
+                    '-v', '/var/run/docker.sock:/var/run/docker.sock',
+                    # Give the nested container host networking so it can talk
+                    # to other containers
+                    '--network=host',
                     # Set aside 512m memory for the host
                     '--memory', '{}MB'.format(available_memory_mib - 512),
                     # Add the participants submission dir to PYTHONPATH
