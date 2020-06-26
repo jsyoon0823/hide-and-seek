@@ -13,7 +13,9 @@ bundle.zip: \
 
 ingestion_program.zip: \
     ingestion_program/metadata \
-    ingestion_program/ingestion.py
+    ingestion_program/ingestion.py \
+    ingestion_program/data/data_preprocess.py \
+    ingestion_program/data/data_utils.py
 	zip -j $@ $^
 
 scoring_program.zip: \
