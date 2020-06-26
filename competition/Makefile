@@ -20,7 +20,9 @@ ingestion_program.zip: \
 
 scoring_program.zip: \
     scoring_program/metadata \
-    scoring_program/scoring.py
+    scoring_program/scoring.py \
+    scoring_program/metrics/general_rnn.py \
+    scoring_program/metrics/metric_utils.py
 	zip -j $@ $^
 
 public_data.zip: \
