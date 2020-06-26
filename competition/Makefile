@@ -13,12 +13,16 @@ bundle.zip: \
 
 ingestion_program.zip: \
     ingestion_program/metadata \
-    ingestion_program/ingestion.py
+    ingestion_program/ingestion.py \
+    ingestion_program/data/data_preprocess.py \
+    ingestion_program/data/data_utils.py
 	zip -j $@ $^
 
 scoring_program.zip: \
     scoring_program/metadata \
-    scoring_program/scoring.py
+    scoring_program/scoring.py \
+    scoring_program/metrics/general_rnn.py \
+    scoring_program/metrics/metric_utils.py
 	zip -j $@ $^
 
 public_data.zip: \
@@ -32,23 +36,27 @@ reference_data.zip: \
 
 starting_kit/hider_add_noise.zip: \
     starting_kit/hider_add_noise/metadata \
+    starting_kit/hider_add_noise/hider.py \
     starting_kit/hider_add_noise/add_noise.py
 	zip -j $@ $^
 
 starting_kit/hider_timegan.zip: \
     starting_kit/hider_timegan/metadata \
-    starting_kit/hider_timegan/timegan.py \
-    starting_kit/hider_timegan/utils.py
+    starting_kit/hider_timegan/hider.py \
+    starting_kit/hider_timegan/timegan/timegan.py \
+    starting_kit/hider_timegan/timegan/utils.py
 	zip -j $@ $^
 
 starting_kit/seeker_binary_predictor.zip: \
     starting_kit/seeker_binary_predictor/metadata \
-    starting_kit/seeker_binary_predictor/binary_predictor.py \
-    starting_kit/seeker_binary_predictor/general_rnn.py
+    starting_kit/seeker_binary_predictor/seeker.py \
+    starting_kit/seeker_binary_predictor/binary_predictor/binary_predictor.py \
+    starting_kit/seeker_binary_predictor/binary_predictor/general_rnn.py
 	zip -j $@ $^
 
 starting_kit/seeker_knn.zip: \
     starting_kit/seeker_knn/metadata \
+    starting_kit/seeker_knn/seeker.py \
     starting_kit/seeker_knn/knn_seeker.py
 	zip -j $@ $^
 

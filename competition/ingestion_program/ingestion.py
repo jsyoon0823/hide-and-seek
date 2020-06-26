@@ -2,12 +2,86 @@
 
 import argparse
 import docker
+import numpy as np
 import os
 import sys
 
+from data.data_utils import data_division
+from data.data_preprocess import data_preprocess
+
 
 MAX_SEQ_LEN = 100
+SEED = 0
+TRAIN_RATE = 0.8
 DEFAULT_IMAGE = "tavianator/hide-and-seek-codalab"
+
+
+def _load_data(data_dir):
+    file_name = os.path.join(data_dir, 'train_longitudinal_data.csv')
+    ori_data = data_preprocess(file_name, MAX_SEQ_LEN)
+
+    divided_data, _ = data_division(ori_data, seed = SEED, divide_rates = [TRAIN_RATE, 1-TRAIN_RATE])
+
+    train_data = np.asarray(divided_data[0])
+    test_data = np.asarray(divided_data[1])
+
+    return train_data, test_data
+
+
+def _run_hider(args):
+    from hider import hider
+
+    print("Loading data...")
+    train_data, test_data = _load_data(args.data_dir)
+
+    print("Running hider...")
+    generated_data = hider(train_data)
+    print("Hider done")
+
+    enlarge_data = np.concatenate((train_data, test_data), axis = 0)
+    enlarge_data_label = np.concatenate((np.ones([train_data.shape[0],]), np.zeros([test_data.shape[0],])), axis = 0)
+
+    np.savez(
+        os.path.join(args.output_dir, "hider_output.npz"),
+        train_data=train_data,
+        test_data=test_data,
+        generated_data=generated_data,
+        enlarge_data=enlarge_data,
+        enlarge_data_label=enlarge_data_label,
+    )
+    print("Saved hider output")
+
+
+def _run_seeker(args):
+    from seeker import seeker
+
+    print("Loading data...")
+    with np.load(os.path.join(args.data_dir, "hider_output.npz")) as data:
+        train_data = data['train_data']
+        test_data = data['test_data']
+        generated_data = data['generated_data']
+        enlarge_data = data['enlarge_data']
+        enlarge_data_label = data['enlarge_data_label']
+
+    # Mix the order
+    idx = np.random.permutation(enlarge_data.shape[0])
+    enlarge_data = enlarge_data[idx]
+    enlarge_data_label = enlarge_data_label[idx]
+
+    print("Running seeker...")
+    reidentified_data = seeker(generated_data, enlarge_data)
+    print("Seeker done")
+
+    np.savez(
+        os.path.join(args.output_dir, "seeker_output.npz"),
+        train_data=train_data,
+        test_data=test_data,
+        generated_data=generated_data,
+        enlarge_data=enlarge_data,
+        enlarge_data_label=enlarge_data_label,
+        reidentified_data=reidentified_data,
+    )
+    print("Saved seeker output")
 
 
 def _docker_pull(client, image):
@@ -22,7 +96,8 @@ def _docker_pull(client, image):
 def _dockerize_submission(args, client, image, runtime):
     submission_dir = os.path.abspath(args.submission_dir)
     data_dir = os.path.abspath(args.data_dir)
-    self_file = os.path.abspath(__file__)
+    output_dir = os.path.abspath(args.output_dir)
+    self_dir = os.path.dirname(os.path.abspath(__file__))
 
     volumes = {
         submission_dir: {
@@ -33,8 +108,12 @@ def _dockerize_submission(args, client, image, runtime):
             "bind": "/usr/share/data",
             "mode": "ro",
         },
-        self_file: {
-            "bind": "/usr/bin/ingestion.py",
+        output_dir: {
+            "bind": "/usr/share/output",
+            "mode": "rw",
+        },
+        self_dir: {
+            "bind": "/usr/bin/ingestion",
             "mode": "ro",
         },
     }
@@ -45,10 +124,11 @@ def _dockerize_submission(args, client, image, runtime):
 
     command = [
         "python3",
-        "/usr/bin/ingestion.py",
+        "/usr/bin/ingestion/ingestion.py",
         "--in-docker",
         "/usr/src/submission",
         "/usr/share/data",
+        "/usr/share/output",
     ]
 
     _docker_pull(client, image)
@@ -110,6 +190,7 @@ def main():
     parser.add_argument("--in-docker", action="store_true", default=False, help=argparse.SUPPRESS)
     parser.add_argument("submission_dir")
     parser.add_argument("data_dir")
+    parser.add_argument("output_dir")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -118,6 +199,9 @@ def main():
 
     if not os.path.isdir(args.data_dir):
         parser.error("Data directory {} does not exist".format(args.data_dir))
+
+    if not os.path.isdir(args.output_dir):
+        parser.error("Output directory {} does not exist".format(args.output_dir))
 
     submission_metadata = os.path.join(args.submission_dir, "metadata")
     if not os.path.isfile(submission_metadata):
@@ -131,17 +215,20 @@ def main():
         parser.error("Either a hider.py or seeker.py module must be present")
 
     if args.in_docker:
-        submission_dir = os.path.abspath(args.submission_dir)
-        data_dir = os.path.abspath(args.data_dir)
+        args.submission_dir = os.path.abspath(args.submission_dir)
+        args.data_dir = os.path.abspath(args.data_dir)
+        args.output_dir = os.path.abspath(args.output_dir)
 
-        os.chdir(submission_dir)
-        sys.path = [submission_dir] + sys.path
+        os.chdir(args.submission_dir)
+        sys.path = [args.submission_dir] + sys.path
+
         if is_hider:
-            import hider
+            _run_hider(args)
         else:
-            import seeker
+            _run_seeker(args)
     else:
         _dockerize(args)
+
 
 if __name__ == "__main__":
     main()
