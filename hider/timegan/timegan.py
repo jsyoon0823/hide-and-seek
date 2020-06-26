@@ -19,7 +19,7 @@ Note: Use original data as training set to generater synthetic data (time-series
 # Necessary Packages
 import tensorflow as tf
 import numpy as np
-from hider.timegan.utils import extract_time, rnn_cell, random_generator, batch_generator
+from .utils import extract_time, rnn_cell, random_generator, batch_generator
 
 
 def timegan (ori_data):

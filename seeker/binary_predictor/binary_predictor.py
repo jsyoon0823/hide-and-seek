@@ -22,8 +22,7 @@ Note: Make binary predictor that predict synthetic data from original enlarged d
 import numpy as np
 import sys
 
-sys.path.append('../../')
-from metrics.general_rnn import GeneralRNN
+from .general_rnn import GeneralRNN
 
 
 def binary_predictor (generated_data, enlarge_data):
