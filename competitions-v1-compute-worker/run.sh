@@ -7,6 +7,7 @@ docker build . -t competitions-v1-compute-worker
 mkdir -p /tmp/codalab
 
 docker run \
+       -v /opt/hide-and-seek:/opt/hide-and-seek \
        -v /var/run/docker.sock:/var/run/docker.sock \
        -v /tmp/codalab:/tmp/codalab \
        -d \
