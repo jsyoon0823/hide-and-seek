@@ -502,6 +502,8 @@ def run(task_id, task_args):
                     # Set the right volume
                     '-v', '{0}:{0}'.format(run_dir),
                     '-v', '{0}:{0}'.format(shared_dir),
+                    # Allow access to the hide-and-seek data
+                    '-v', '/opt/hide-and-seek:/opt/hide-and-seek',
                     # Allow the nested container to use docker
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     # Set aside 512m memory for the host

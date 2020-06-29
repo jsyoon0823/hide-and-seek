@@ -1,1 +1,1 @@
-command: python $program/scoring.py $input $output
+command: python3 $program/scoring.py -q $input $output /opt/hide-and-seek
