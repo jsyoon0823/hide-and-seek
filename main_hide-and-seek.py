@@ -32,7 +32,6 @@ from __future__ import print_function
 
 import argparse
 import numpy as np
-import shutil
 import pickle
 import warnings
 warnings.filterwarnings("ignore")
@@ -132,8 +131,6 @@ def main(args):
   reidentification_score = reidentify_score(enlarge_data_label, reidentified_data)
   
   print('Reidentification score: ' + str(np.round(reidentification_score, 4)))
-  
-  shutil.rmtree('tmp')
   
   return feat_pred, step_ahead_pred, reidentification_score
   

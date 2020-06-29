@@ -15,6 +15,7 @@ Contact: jsyoon0823@gmail.com
 import os
 import tensorflow as tf
 import numpy as np
+import tempfile
 from datetime import datetime
 from tensorflow.keras import layers
 from keras.callbacks import ModelCheckpoint
@@ -114,12 +115,6 @@ class GeneralRNN():
 
     # Predictor model define
     self.predictor_model = None
-
-    # Set path for model saving
-    model_path = 'tmp/tmp'
-    if not os.path.exists(model_path):
-      os.makedirs(model_path)
-    self.save_file_name = '{}'.format(model_path) + datetime.now().strftime('%H%M%S') + '.hdf5'
   
   
   def _build_model(self, x, y):
@@ -182,19 +177,21 @@ class GeneralRNN():
     
     self.predictor_model = self._build_model(train_x, train_y)
 
-    # Callback for the best model saving
-    save_best = ModelCheckpoint(self.save_file_name, monitor='val_loss',
-                                mode='min', verbose=False,
-                                save_best_only=True)
+    with tempfile.TemporaryDirectory() as tmpdir:
+      save_file_name = os.path.join(tmpdir, 'model.ckpt')
 
-    # Train the model
-    self.predictor_model.fit(train_x, train_y, 
-                             batch_size=self.batch_size, epochs=self.epoch, 
-                             validation_data=(valid_x, valid_y), 
-                             callbacks=[save_best], verbose=False)
+      # Callback for the best model saving
+      save_best = ModelCheckpoint(save_file_name, monitor='val_loss',
+                                  mode='min', verbose=False,
+                                  save_best_only=True)
 
-    self.predictor_model.load_weights(self.save_file_name)
-    os.remove(self.save_file_name)
+      # Train the model
+      self.predictor_model.fit(train_x, train_y, 
+                               batch_size=self.batch_size, epochs=self.epoch, 
+                               validation_data=(valid_x, valid_y), 
+                               callbacks=[save_best], verbose=False)
+
+      self.predictor_model.load_weights(save_file_name)
 
     return self.predictor_model
   
