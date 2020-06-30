@@ -30,9 +30,9 @@ python3 -m main_hide-and-seek.py.
 - add_noise: a simple model that adds Gaussian noise to the original data to create the synthetic data
 - timegan: TimeGAN (Yoon et al., NeurIPS 2019) - model based on GANs to generate synthetic data
 
-(3) master (only for the master (competition owner))
-- main_master.py: main file for the evaluation
-- masters need to put test_longitudinal_data.csv in data/amsterdam directory
+(3) master
+- main_master.py: main file used in the competition backend to evaluate algorithms
+- appropriate data needs to be saved as test_longitudinal_data.csv in data/amsterdam directory for main_master.py to run
 
 (4) metrics
 - general_rnn.py: general rnn models used to compute metrics
