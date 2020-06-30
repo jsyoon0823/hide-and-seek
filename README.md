@@ -6,12 +6,11 @@ Neural Information Processing Systems (NeurIPS) Competition, 2020.
 
 Link: https://www.vanderschaar-lab.com/announcing-the-neurips-2020-hide-and-seek-privacy-challenge/
 
-Last updated Date: June 21th 2020
+Last updated Date: June 30th 2020
 Code author: Jinsung Yoon
 Contact: jsyoon0823@gmail.com
 
-This directory contains implementations of NeurIPS Hide-and-Seek competition framework for generating private synthetic data (hider)
-and reidentifying the original data (seeker) using real-world datasets.
+This directory contains implementations of NeurIPS 2020 Hide-and-Seek benchmarks and the evaluation framework. This includes 2 benchmarks for generating private synthetic data (hiders) and 2 for reidentifying the original data (seekers) using real-world datasets.
 
 -   Amsterdam data: https://amsterdammedicaldatascience.nl/ (private data that needs approval through the website)
 -   Stock data: https://finance.yahoo.com/quote/GOOG/history?p=GOOG
@@ -22,31 +21,30 @@ python3 -m main_hide-and-seek.py.
 ### Code explanation
 
 (1) data
-- public_data directory: public data to be released to the participants (as an example)
-- amsterdam_data directory: amsterdam data should be in this directory named as train_longitudinal_data.csv (main data)
-- data_utils.py: train/test data division 
-- data_preprocess.py: data preprocessing for Amsterdam database
+- public_data directory: this directory contains dummy public data to be used prior to data access being granted
+- amsterdam_data directory: amsterdam data should be saved in this directory with the file name set to train_longitudinal_data.csv (main data)
+- data_utils.py: used to divide data into train/test splits
+- data_preprocess.py: data preprocessing tools for Amsterdam database
 
 (2) hider
-- add_noise: add Gaussian noise on the original data and use it as the synthetic data
-- timegan: TimeGAN (Yoon et al., NeurIPS 2019) model for generating synthetic time-series data
+- add_noise: a simple model that adds Gaussian noise to the original data to create the synthetic data
+- timegan: TimeGAN (Yoon et al., NeurIPS 2019) - model based on GANs to generate synthetic data
 
 (3) master (only for the master (competition owner))
 - main_master.py: main file for the evaluation
 - masters need to put test_longitudinal_data.csv in data/amsterdam directory
 
 (4) metrics
-- general_rnn.py: general rnn models for evaluation
-- metric_utils.py: feature prediction & one-step ahead prediction & reidentification score
+- general_rnn.py: general rnn models used to compute metrics
+- metric_utils.py: feature prediction & one-step ahead prediction & reidentification score - all submissions will be ranked based on reidentification score, while hider submissions must meet a minimum threshold in feature and one-step ahead precition
 
 (5) seeker
 - knn: use the distance between original and synthetic data for reidentifying the real data
-- binary_predictor: use the binary predictor (to classify the genereated data and real data) 
-                    to define the distance between original and synthetic data.
-                    Then, use that distance for reidentifying the real data
+- binary_predictor: use a binary classifier to classify genereated data and the (enlarged) real data.
+                    Reidentify by selecting the subset of the enlarged data with the highest classification scores (i.e. that is "most" mis-classified as generated).
 
 (6) main_hide-and-seek.py
-- main file that competition participants (both hider and seeker) can use.
+- main file that competition participants (both hider and seeker) can use to run the benchmarks against each other or their own models by substituting their model for the appropriate model.
 
 ### Command inputs:
 
