@@ -37,7 +37,6 @@ def data_preprocess(file_name, max_seq_len):
 
   # Load data  
   ori_data = pd.read_csv(file_name)
-  ori_data = ori_data.drop(['Unnamed: 0'], axis = 1)
   
   # Parameters
   uniq_id = np.unique(ori_data['admissionid'])
