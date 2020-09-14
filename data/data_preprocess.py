@@ -20,7 +20,7 @@ Contact: jsyoon0823@gmail.com
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -45,11 +45,11 @@ def data_preprocess(file_name, max_seq_len):
   median_vals = ori_data.median()
 
   # Preprocessing
-  scaler = StandardScaler()
+  scaler = MinMaxScaler()
   scaler.fit(ori_data)
 
   # Output initialization
-  processed_data = np.zeros([no, max_seq_len, dim])
+  processed_data = -np.ones([no, max_seq_len, dim])
   
   # For each uniq id
   for i in tqdm(range(no)):

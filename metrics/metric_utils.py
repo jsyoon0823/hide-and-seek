@@ -22,7 +22,7 @@ metric_utils.py
 # Necessary packages
 import numpy as np
 from metrics.general_rnn import GeneralRNN
-from sklearn.metrics import accuracy_score, mean_squared_error, roc_auc_score
+from sklearn.metrics import accuracy_score, roc_auc_score
 
 def reidentify_score(enlarge_label, pred_label):
   """Return the reidentification score.
@@ -36,6 +36,24 @@ def reidentify_score(enlarge_label, pred_label):
   """  
   accuracy = accuracy_score(enlarge_label, pred_label > 0.5)  
   return accuracy
+
+
+def rmse_error (y_true, y_pred):
+  """User defined root mean squared error.
+  
+  Args:
+    - y_true: true labels
+    - y_pred: predictions
+    
+  Returns:
+    - computed_rmse: computed rmse loss
+  """
+  # Exclude masked labels
+  idx = (y_true >= 0) * 1
+  # Mean squared loss excluding masked labels
+  computed_mse = np.sum(idx * ((y_true - y_pred)**2)) / np.sum(idx)
+  computed_rmse = np.sqrt(computed_mse)
+  return computed_rmse
 
 
 def feature_prediction (train_data, test_data, index):
@@ -88,7 +106,7 @@ def feature_prediction (train_data, test_data, index):
     if model_parameters['task'] == 'classification':
       temp_perf = roc_auc_score(test_y, test_y_hat)
     elif model_parameters['task'] == 'regression':
-      temp_perf = mean_squared_error(test_y, test_y_hat)
+      temp_perf = rmse_error(test_y, test_y_hat)
       
     perf.append(temp_perf)
     
@@ -140,6 +158,6 @@ def one_step_ahead_prediction (train_data, test_data):
   if model_parameters['task'] == 'classification':
     perf = roc_auc_score(test_y, test_y_hat)
   elif model_parameters['task'] == 'regression':
-    perf = mean_squared_error(test_y, test_y_hat)
+    perf = rmse_error(test_y, test_y_hat)
     
   return perf
